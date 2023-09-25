@@ -23,9 +23,7 @@ public class TeamController {
     public ResponseEntity<List<Team>> getAllteams(@RequestParam(required = false) String title) {
         try {
             List<Team> teams = new ArrayList<Team>();
-
-            if (title == null)
-                teamRepository.findAll().forEach(teams::add);
+            teamRepository.findAll().forEach(teams::add);
             if (teams.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

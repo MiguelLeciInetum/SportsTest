@@ -17,10 +17,10 @@ public class Match {
     private String round;
     @Column(nullable = false)
     private Date date;
-    @OneToOne//(fetch = FetchType.EAGER)
+    @ManyToOne//(fetch = FetchType.EAGER)
     @JoinColumn(name ="TEAM_HOME", referencedColumnName = "ID")
     private Team teamHome;
-    @OneToOne//(fetch = FetchType.EAGER)
+    @ManyToOne//(fetch = FetchType.EAGER)
     @JoinColumn(name ="TEAM_OUT", referencedColumnName = "ID")
     private Team teamOut;
     @Column(nullable = false)
@@ -35,14 +35,6 @@ public class Match {
         this.teamOut = teamOut;
         this.score = score;
     }
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getRound() {
         return round;
     }
