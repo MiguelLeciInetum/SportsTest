@@ -35,6 +35,9 @@ public class Match {
         this.teamOut = teamOut;
         this.score = score;
     }
+    public int getId() {
+        return id;
+    }
     public String getRound() {
         return round;
     }

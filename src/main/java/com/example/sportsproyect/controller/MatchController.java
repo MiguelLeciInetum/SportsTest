@@ -33,12 +33,10 @@ public class MatchController {
     TeamRepository teamRepository;
 
     @GetMapping()
-    public ResponseEntity<List<Match>> getAllMatchs(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Match>> getAllMatchs() {
         try {
             List<Match> matchs = new ArrayList<Match>();
-
-            if (title == null)
-                matchRepository.findAll().forEach(matchs::add);
+            matchRepository.findAll().forEach(matchs::add);
             if (matchs.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
