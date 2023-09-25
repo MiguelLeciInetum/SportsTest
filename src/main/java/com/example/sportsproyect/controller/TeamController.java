@@ -20,7 +20,7 @@ public class TeamController {
     TeamRepository teamRepository;
 
     @GetMapping()
-    public ResponseEntity<List<Team>> getAllteams(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Team>> getAllteams() {
         try {
             List<Team> teams = new ArrayList<Team>();
             teamRepository.findAll().forEach(teams::add);

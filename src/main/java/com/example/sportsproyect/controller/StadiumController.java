@@ -19,12 +19,10 @@ public class StadiumController {
     StadiumRepository stadiumRepository;
 
     @GetMapping()
-    public ResponseEntity<List<Stadium>> getAllStadiums(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Stadium>> getAllStadiums() {
         try {
             List<Stadium> stadiums = new ArrayList<Stadium>();
-
-            if (title == null)
-                stadiumRepository.findAll().forEach(stadiums::add);
+            stadiumRepository.findAll().forEach(stadiums::add);
             if (stadiums.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

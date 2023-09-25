@@ -2,6 +2,8 @@ package com.example.sportsproyect.controller;
 
 import com.example.sportsproyect.model.LeaderBoardDto;
 import com.example.sportsproyect.model.Match;
+import com.example.sportsproyect.model.Team;
+import com.example.sportsproyect.repository.TeamRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,12 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.Retention;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
 class MatchControllerTest {
 
+    @Autowired
+    private TeamController teamController;
     @Autowired
     private MatchController controller;
 
@@ -35,8 +40,9 @@ class MatchControllerTest {
     }
     @Test
     public void createMatch() {
-        ResponseEntity<List<Match>> response = controller.getAllMatchs();
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<Team> teams = teamController.getAllteams().getBody();
+        ResponseEntity response = controller.createMatch(new Match("1", new Date(), teams.get(1), teams.get(2),"11-11"));
+        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
     }
     @Test
