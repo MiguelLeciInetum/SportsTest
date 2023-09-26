@@ -18,6 +18,12 @@ class TeamControllerTest {
 
     @Autowired
     private TeamController controller;
+    @Autowired
+    private MatchController matchController;
+    @Autowired
+    private StadiumController stadiumController;
+    @Autowired
+    private PlayerController playerController;
 
     @Test
     public void getAllteams() {
@@ -50,15 +56,23 @@ class TeamControllerTest {
     }
     @Test
     public void deleteTeam() {
-        ResponseEntity response = controller.deleteTeam(1);
+        matchController.deleteAllMatchs();
+        playerController.deleteAllPlayers();
+        stadiumController.deleteAllStadiums();
+        ResponseEntity<List<Team>> responseGet = controller.getAllteams();
+        Team team = responseGet.getBody().stream().findFirst().get();
+        ResponseEntity response = controller.deleteTeam(team.getId());
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        ResponseEntity<Team> responseDel = controller.getTeamById(1);
+        ResponseEntity<Team> responseDel = controller.getTeamById(team.getId());
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         Assertions.assertNull(responseDel.getBody());
         controller.createTeam(new Team("Tauste FC","TAU"));
     }
     @Test
     public void deleteAllTeams() {
+        matchController.deleteAllMatchs();
+        playerController.deleteAllPlayers();
+        stadiumController.deleteAllStadiums();
         ResponseEntity response = controller.deleteAllTeams();
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         ResponseEntity<List<Team>> responseDel = controller.getAllteams();
