@@ -19,12 +19,10 @@ public class PlayerController {
     PlayerRepository playerRepository;
 
     @GetMapping()
-    public ResponseEntity<List<Player>> getAllPlayers(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Player>> getAllPlayers() {
         try {
             List<Player> players = new ArrayList<Player>();
-
-            if (title == null)
-                playerRepository.findAll().forEach(players::add);
+            playerRepository.findAll().forEach(players::add);
             if (players.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
