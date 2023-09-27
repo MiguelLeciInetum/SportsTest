@@ -16,7 +16,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class Match {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    private Long id;
     @NonNull
     @Column(nullable = false)
     private String round;
