@@ -2,11 +2,10 @@ package com.example.sportsproyect.model;
 
 import lombok.*;
 
-import java.util.Date;
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class LeaderBoardDto {
+public class LeaderBoardRequest {
     private Team team;
     private int points;
 }

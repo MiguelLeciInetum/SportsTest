@@ -1,7 +1,5 @@
 package com.example.sportsproyect.controller;
 
-import com.example.sportsproyect.model.LeaderBoardDto;
-import com.example.sportsproyect.model.Match;
 import com.example.sportsproyect.model.Stadium;
 import com.example.sportsproyect.model.Team;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest

@@ -1,14 +1,11 @@
 package com.example.sportsproyect.service;
 
-import com.example.sportsproyect.model.LeaderBoardDto;
+import com.example.sportsproyect.model.LeaderBoardRequest;
 import com.example.sportsproyect.model.Match;
 import com.example.sportsproyect.model.Team;
 import com.example.sportsproyect.repository.MatchRepository;
 import com.example.sportsproyect.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +29,9 @@ public class MatchService {
 
     public Match getMatchById(long id) {
         return matchRepository.findById(id).get();
+        // return matchRepository.findById(id).orElse(new Match());
+        // return matchRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Match not found"));
+
     }
 
     public Match createMatch(Match match) {
@@ -41,7 +41,7 @@ public class MatchService {
     public Match updateMatch(Match match) {
         return matchRepository.save(match);
     }
-    public void deleteMatch(@PathVariable("id") long id) {
+    public void deleteMatch(long id) {
         matchRepository.deleteById(id);
     }
 
@@ -56,17 +56,17 @@ public class MatchService {
                 new Match(
                         Integer.toString(rand.nextInt(28)),
                         new Date(),
-                        teams.remove(rand.nextInt((int)teams.stream().count())),
-                        teams.get(rand.nextInt((int)teams.stream().count())),
+                        teams.remove(rand.nextInt(teams.size())),
+                        teams.get(rand.nextInt(teams.size())),
                         rand.nextInt(10) + "-" + rand.nextInt(10)
                 )
         );
     }
 
-    public List<LeaderBoardDto> getLeaderBoard() {
+    public List<LeaderBoardRequest> getLeaderBoard() {
         List<Match> matchs = matchRepository.findAll();
         List<Team> teams = teamRepository.findAll();
-        List<LeaderBoardDto> leaderBoardDtos = new ArrayList<LeaderBoardDto>();
+        List<LeaderBoardRequest> leaderBoardDtos = new ArrayList<LeaderBoardRequest>();
         for (Team team : teams) {
             int points = 0;
             for (Match match : matchs) {
@@ -83,7 +83,7 @@ public class MatchService {
                     if (home == out) points++;
                 }
             }
-            leaderBoardDtos.add(new LeaderBoardDto(team, points));
+            leaderBoardDtos.add(new LeaderBoardRequest(team, points));
         }
         return leaderBoardDtos;
     }

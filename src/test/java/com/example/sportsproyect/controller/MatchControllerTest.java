@@ -1,20 +1,7 @@
 package com.example.sportsproyect.controller;
 
-import com.example.sportsproyect.model.LeaderBoardDto;
-import com.example.sportsproyect.model.Match;
-import com.example.sportsproyect.model.Team;
-import com.example.sportsproyect.repository.TeamRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-
-import java.lang.annotation.Retention;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 class MatchControllerTest {
