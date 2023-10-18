@@ -5,7 +5,6 @@ import com.example.sportsproyect.service.StadiumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("stadiums")

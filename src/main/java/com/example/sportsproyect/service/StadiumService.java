@@ -5,7 +5,6 @@ import com.example.sportsproyect.repository.StadiumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
 @Service
 public class StadiumService {
     private final StadiumRepository stadiumRepository;
@@ -18,7 +17,7 @@ public class StadiumService {
         return stadiumRepository.findAll();
     }
     public Stadium getStadiumById(long id) {
-        return stadiumRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Match not found"));
+        return stadiumRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Stadium not found"));
     }
     public Stadium createStadium(Stadium player) {
         return stadiumRepository.save(player);
