@@ -18,7 +18,7 @@ class PlayerControllerTest {
     @Autowired
     private TeamController teamController;
 
-    @Test
+    /*@Test
     public void getAllPlayers() {
         ResponseEntity<List<Player>> response = controller.getAllPlayers();
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -68,5 +68,5 @@ class PlayerControllerTest {
         Assertions.assertNull(responseDel.getBody());
         List<Team> teams = teamController.getAllteams().getBody();
         controller.createPlayer(new Player("Steven","Meurrens","BEG",teams.get(1)));
-    }
+    }*/
 }

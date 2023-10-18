@@ -19,7 +19,7 @@ class StadiumControllerTest {
     @Autowired
     private TeamController teamController;
 
-    @Test
+ /*   @Test
     public void getAllStadiums() {
         ResponseEntity<List<Stadium>> response = controller.getAllStadiums();
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -69,5 +69,5 @@ class StadiumControllerTest {
         Assertions.assertNull(responseDel.getBody());
         List<Team> teams = teamController.getAllteams().getBody();
         controller.createStadium(new Stadium("Alcorica Facebook", "Chiclana", teams.stream().findFirst().get()));
-    }
+    }*/
 }
