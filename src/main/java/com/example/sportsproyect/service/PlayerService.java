@@ -11,12 +11,10 @@ import java.util.Random;
 @Service
 public class PlayerService {
     private final PlayerRepository playerRepository;
-    private final TeamRepository teamRepository;
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository)
+    public PlayerService(PlayerRepository playerRepository)
     {
         this.playerRepository = playerRepository;
-        this.teamRepository = teamRepository;
     }
     public List<Player> getAllPlayers() {
         return playerRepository.findAll();
