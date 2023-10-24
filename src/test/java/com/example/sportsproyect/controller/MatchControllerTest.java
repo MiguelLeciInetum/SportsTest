@@ -1,22 +1,48 @@
 package com.example.sportsproyect.controller;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import com.example.sportsproyect.model.Match;
+import com.example.sportsproyect.model.Team;
+import com.example.sportsproyect.service.MatchService;
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
+import java.util.*;
 
-@SpringBootTest
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+
+@WebMvcTest(controllers = MatchController.class)
 class MatchControllerTest {
 
     @Autowired
-    private TeamController teamController;
+    private MockMvc mockMvc;
     @Autowired
-    private MatchController controller;
+    private MatchService matchService;
+    private List<Match> matchesList;
+    private List<Team> teamsList;
 
-   /* @Test
-    public void getAllMatchs() {
-        List<Match> matchs = controller.getAllMatchs();
-        Assertions.assertNotNull(matchs);
+    @BeforeEach
+    void setUp() {
+        this.teamsList = new ArrayList<>();
+        this.teamsList.add(new Team( "Real Zaragoza","ZGZ"));
+        this.teamsList.add(new Team( "Real Madrid","MAD"));
+        this.teamsList.add(new Team( "Barcelona","BCF"));
+        this.matchesList = new ArrayList<>();
+        this.matchesList.add(new Match( "1", new Date(), teamsList.get(1),teamsList.get(2),"1-2"));
+        this.matchesList.add(new Match( "1", new Date(), teamsList.get(2),teamsList.get(3),"2-3"));
+        this.matchesList.add(new Match( "1", new Date(), teamsList.get(3),teamsList.get(1),"3-1"));
     }
     @Test
+    public void getAllMatchs() throws Exception{
+        given(matchService.getAllMatchs()).willReturn(matchesList);
+        this.mockMvc.perform(get(""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(matchesList.size())));
+    }
+   /* @Test
     public void getMatchById() {
         ResponseEntity<List<Match>> responseGet = controller.getAllMatchs();
         Match match = responseGet.getBody().stream().findFirst().get();

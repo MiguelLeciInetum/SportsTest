@@ -1,5 +1,6 @@
 package com.example.sportsproyect.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
+@ToString
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor
@@ -24,11 +26,11 @@ public class Match {
     @Column(nullable = false)
     private Date date;
     @NonNull
-    @ManyToOne//(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name ="TEAM_HOME", referencedColumnName = "ID")
     private Team teamHome;
     @NonNull
-    @ManyToOne//(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name ="TEAM_OUT", referencedColumnName = "ID")
     private Team teamOut;
     @NonNull
