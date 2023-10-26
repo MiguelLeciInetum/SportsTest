@@ -1,73 +1,100 @@
 package com.example.sportsproyect.controller;
 
+import com.example.sportsproyect.model.Player;
 import com.example.sportsproyect.model.Stadium;
 import com.example.sportsproyect.model.Team;
+import com.example.sportsproyect.service.PlayerService;
+import com.example.sportsproyect.service.StadiumService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.metadata.HsqlTableMetaDataProvider;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = StadiumController.class)
 class StadiumControllerTest {
+        @Autowired
+        private ObjectMapper objectMapper;
+        @Autowired
+        private MockMvc mockMvc;
+        @MockBean
+        private StadiumService stadiumService;
+        private Team team;
+        private List<Stadium> stadiumsList;
+        private Stadium stadium;
 
-    @Autowired
-    private StadiumController controller;
-    @Autowired
-    private TeamController teamController;
-
- /*   @Test
-    public void getAllStadiums() {
-        ResponseEntity<List<Stadium>> response = controller.getAllStadiums();
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-    }
-    @Test
-    public void getStadiumById() {
-        ResponseEntity<List<Stadium>> responseGet = controller.getAllStadiums();
-        Stadium stadium = responseGet.getBody().stream().findFirst().get();
-        ResponseEntity<Stadium> response = controller.getStadiumById(stadium.getId());
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-    }
-    @Test
-    public void createStadium() {
-        controller.deleteAllStadiums();
-        List<Team> teams = teamController.getAllteams().getBody();
-        ResponseEntity response = controller.createStadium(new Stadium("Alcorica Facebook", "Chiclana", teams.stream().findFirst().get()));
-        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-    }
-    @Test
-    public void updateMatch() {
-        ResponseEntity<List<Stadium>> responseGet = controller.getAllStadiums();
-        Stadium stadium = responseGet.getBody().stream().findFirst().get();
-        stadium.setName("PradillaDebro");
-        ResponseEntity<Stadium> response = controller.updateStadium(stadium.getId(), stadium);
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-    }
-    @Test
-    public void deleteStadium() {
-        ResponseEntity response = controller.deleteStadium(1);
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        ResponseEntity<Stadium> responseDel = controller.getStadiumById(1);
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        Assertions.assertNull(responseDel.getBody());
-        List<Team> teams = teamController.getAllteams().getBody();
-        controller.createStadium(new Stadium("Alcorica Facebook", "Chiclana", teams.stream().findFirst().get()));
-    }
-    @Test
-    public void deleteAllStadiums() {
-        ResponseEntity response = controller.deleteAllStadiums();
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        ResponseEntity<List<Stadium>> responseDel = controller.getAllStadiums();
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, responseDel.getStatusCode());
-        Assertions.assertNull(responseDel.getBody());
-        List<Team> teams = teamController.getAllteams().getBody();
-        controller.createStadium(new Stadium("Alcorica Facebook", "Chiclana", teams.stream().findFirst().get()));
-    }*/
+        @BeforeEach
+        void setUp() {
+            team = new Team( "Barcelona","BCF");
+            this.stadiumsList = new ArrayList<>();
+            this.stadiumsList.add(new Stadium("Santiago","Madrid",team));
+            this.stadiumsList.add(new Stadium("Romareda","Zaragoza",team));
+            this.stadiumsList.add(new Stadium("Spotify","Barcelona",team));
+            stadium = new Stadium("Santiago","Madrid",team);
+        }
+        @Test
+        public void getAllStadiums() throws Exception{
+            given(stadiumService.getAllStadiums()).willReturn(stadiumsList);
+            this.mockMvc.perform(get("/stadiums"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.size()", is(stadiumsList.size())));
+        }
+        @Test
+        public void getStadiumById() throws Exception{
+            given(stadiumService.getStadiumById(1L)).willReturn(stadium);
+            this.mockMvc.perform(get("/stadiums/1"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name", is(stadium.getName())))
+                    .andExpect(jsonPath("$.location", is(stadium.getLocation())));
+        }
+        @Test
+        public void createStadium() throws Exception{
+            given(stadiumService.createStadium(ArgumentMatchers.any())).willAnswer((invocation -> invocation.getArgument(0)));
+            ResultActions response = mockMvc.perform(post("/stadiums")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(stadium)));
+            response.andExpect(MockMvcResultMatchers.status().isOk());
+        }
+        @Test
+        public void updateStadium() throws Exception{
+            given(stadiumService.updateStadium(ArgumentMatchers.any())).willAnswer((invocation -> invocation.getArgument(0)));
+            ResultActions response = mockMvc.perform(put("/stadiums")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(stadium)));
+            response.andExpect(MockMvcResultMatchers.status().isOk());
+        }
+        @Test
+        public void deleteStadium() throws Exception {
+            mockMvc.perform(delete("/stadiums/1")
+                            .content(objectMapper.writeValueAsString(stadium))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+        @Test
+        public void deleteAllStadiums() throws Exception {
+            mockMvc.perform(delete("/stadiums"))
+                    .andExpect(status().isOk());
+        }
 }

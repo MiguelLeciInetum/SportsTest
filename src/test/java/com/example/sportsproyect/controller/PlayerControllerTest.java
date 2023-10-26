@@ -1,72 +1,100 @@
 package com.example.sportsproyect.controller;
 
 import com.example.sportsproyect.model.*;
+import com.example.sportsproyect.service.MatchService;
+import com.example.sportsproyect.service.PlayerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-@SpringBootTest
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = PlayerController.class)
 class PlayerControllerTest {
 
     @Autowired
-    private PlayerController controller;
+    private ObjectMapper objectMapper;
     @Autowired
-    private TeamController teamController;
+    private MockMvc mockMvc;
+    @MockBean
+    private PlayerService playerService;
+    private Team team;
+    private List<Player> playersList;
+    private Player player;
 
-    /*@Test
-    public void getAllPlayers() {
-        ResponseEntity<List<Player>> response = controller.getAllPlayers();
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
+    @BeforeEach
+    void setUp() {
+        team = new Team( "Barcelona","BCF");
+        this.playersList = new ArrayList<>();
+        this.playersList.add(new Player("Jose","Cruz","SPN",team));
+        this.playersList.add(new Player("Paco","Paquito","SPN",team));
+        this.playersList.add(new Player("Napoleon","Aparte","SPN",team));
+        player = new Player("Napoleon","Aparte","SPN",team);
     }
     @Test
-    public void getPlayerById() {
-        ResponseEntity<List<Player>> responseGet = controller.getAllPlayers();
-        Player player = responseGet.getBody().stream().findFirst().get();
-        ResponseEntity<Player> response = controller.getPlayerById(player.getId());
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
+    public void getAllPlayers() throws Exception{
+        given(playerService.getAllPlayers()).willReturn(playersList);
+        this.mockMvc.perform(get("/players"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(playersList.size())));
     }
     @Test
-    public void createPlayer() {
-        controller.deleteAllPlayers();
-        List<Team> teams = teamController.getAllteams().getBody();
-        ResponseEntity response = controller.createPlayer(new Player("Steven","Meurrens","BEG",teams.get(1)));
-        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
+    public void getPlayerById() throws Exception{
+        given(playerService.getPlayerById(1L)).willReturn(player);
+        this.mockMvc.perform(get("/players/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(player.getName())))
+                .andExpect(jsonPath("$.surname", is(player.getSurname())))
+                .andExpect(jsonPath("$.nationality", is(player.getNationality())));
     }
     @Test
-    public void updateMatch() {
-        ResponseEntity<List<Player>> responseGet = controller.getAllPlayers();
-        Player player = responseGet.getBody().stream().findFirst().get();
-        player.setNationality("ESP");
-        ResponseEntity<Player> response = controller.updatePlayer(player.getId(), player);
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
+    public void createPlayer() throws Exception{
+        given(playerService.createPlayer(ArgumentMatchers.any())).willAnswer((invocation -> invocation.getArgument(0)));
+        ResultActions response = mockMvc.perform(post("/players")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(player)));
+        response.andExpect(MockMvcResultMatchers.status().isOk());
     }
     @Test
-    public void deletePlayer() {
-        ResponseEntity response = controller.deletePlayer(1);
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        ResponseEntity<Player> responseDel = controller.getPlayerById(1);
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        Assertions.assertNull(responseDel.getBody());
-        List<Team> teams = teamController.getAllteams().getBody();
-        controller.createPlayer(new Player("Steven","Meurrens","BEG",teams.get(1)));
+    public void updatePlayer() throws Exception{
+        given(playerService.updatePlayer(ArgumentMatchers.any())).willAnswer((invocation -> invocation.getArgument(0)));
+        ResultActions response = mockMvc.perform(put("/players")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(player)));
+        response.andExpect(MockMvcResultMatchers.status().isOk());
     }
     @Test
-    public void deleteAllPlayers() {
-        ResponseEntity response = controller.deleteAllPlayers();
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        ResponseEntity<List<Player>> responseDel = controller.getAllPlayers();
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, responseDel.getStatusCode());
-        Assertions.assertNull(responseDel.getBody());
-        List<Team> teams = teamController.getAllteams().getBody();
-        controller.createPlayer(new Player("Steven","Meurrens","BEG",teams.get(1)));
-    }*/
+    public void deletePlayer() throws Exception {
+        mockMvc.perform(delete("/players/1")
+                        .content(objectMapper.writeValueAsString(player))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void deleteAllPlayers() throws Exception {
+        mockMvc.perform(delete("/players"))
+                .andExpect(status().isOk());
+    }
 }
