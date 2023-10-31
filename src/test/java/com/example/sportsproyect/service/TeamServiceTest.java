@@ -1,5 +1,6 @@
 package com.example.sportsproyect.service;
 
+import com.example.sportsproyect.mappers.TeamMapper;
 import com.example.sportsproyect.model.Team;
 import com.example.sportsproyect.repository.TeamRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -19,12 +20,14 @@ import static org.mockito.Mockito.verify;
 class TeamServiceTest {
     @Mock
     private TeamRepository teamsRepository;
+    @Mock
+    private TeamMapper teamMapper;
     private AutoCloseable autoCloseable;
     private TeamService underTest;
     @BeforeEach
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
-        underTest = new TeamService(teamsRepository);
+        underTest = new TeamService(teamsRepository,teamMapper);
     }
     @AfterEach
     void tearDown() throws Exception {

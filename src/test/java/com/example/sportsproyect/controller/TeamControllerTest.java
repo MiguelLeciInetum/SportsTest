@@ -2,6 +2,7 @@ package com.example.sportsproyect.controller;
 
 import com.example.sportsproyect.model.Stadium;
 import com.example.sportsproyect.model.Team;
+import com.example.sportsproyect.model.TeamDto;
 import com.example.sportsproyect.service.StadiumService;
 import com.example.sportsproyect.service.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +41,7 @@ class TeamControllerTest {
     private TeamService teamService;
     private Team team;
     private List<Team> teamsList;
+    private List<TeamDto> teamsDtoList;
 
     @BeforeEach
     void setUp() {
@@ -48,10 +50,14 @@ class TeamControllerTest {
         this.teamsList.add(new Team("Barcelona", "BCF"));
         this.teamsList.add(new Team("Zaragoza", "ZGZ"));
         this.teamsList.add(new Team("Madrid", "MDR"));
+        this.teamsDtoList = new ArrayList<>();
+        this.teamsDtoList.add(new TeamDto("Barcelona", "BCF"));
+        this.teamsDtoList.add(new TeamDto("Zaragoza", "ZGZ"));
+        this.teamsDtoList.add(new TeamDto("Madrid", "MDR"));
     }
     @Test
     public void getAllTeams() throws Exception {
-        given(teamService.getAllTeams()).willReturn(teamsList);
+        given(teamService.getAllTeams()).willReturn(teamsDtoList);
         this.mockMvc.perform(get("/teams"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(teamsList.size())));

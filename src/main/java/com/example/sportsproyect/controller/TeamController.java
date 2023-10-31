@@ -1,6 +1,7 @@
 package com.example.sportsproyect.controller;
 
 import com.example.sportsproyect.model.Team;
+import com.example.sportsproyect.model.TeamDto;
 import com.example.sportsproyect.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ public class TeamController {
     @Autowired
     TeamService teamService;
     @GetMapping()
-    public List<Team> getAllTeams()  {
+    public List<TeamDto> getAllTeams()  {
         return teamService.getAllTeams();
     }
     @GetMapping("{id}")
